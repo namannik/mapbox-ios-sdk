@@ -76,9 +76,4 @@
 /** The current file size of the database cache on disk. */
 - (unsigned long long)fileSize;
 
-/** Set a flag to include the database in automatic iCloud backups.  (The default during database creation is to exclude.)
- 
-*   @param include If YES, the database will be included in automatic iCloud backups. */
-- (void)includeInBackup:(BOOL)include;
-
 @end

@@ -99,8 +99,6 @@
         [db executeUpdate:@"CREATE UNIQUE INDEX IF NOT EXISTS main_index ON ZCACHE(tile_hash, cache_key)"];
         [db executeUpdate:@"CREATE INDEX IF NOT EXISTS last_used_index ON ZCACHE(last_used)"];
     }];
-    
-    [self includeInBackup:NO];
 }
 
 - (id)initWithDatabase:(NSString *)path
@@ -137,11 +135,6 @@
     _tileCount = [self countTiles];
 
 	return self;	
-}
-
-- (void)includeInBackup:(BOOL)include
-{
-    [[NSURL.alloc initFileURLWithPath:self.databasePath] setResourceValue:@(!include) forKey:NSURLIsExcludedFromBackupKey error:nil];
 }
 
 - (id)initUsingCacheDir:(BOOL)useCacheDir
