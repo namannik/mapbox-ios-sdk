@@ -1362,9 +1362,16 @@
     longPressRecognizer.allowableMovement = MAXFLOAT;
     longPressRecognizer.delegate = self;
 
+    UILongPressGestureRecognizer *doubleTapAndHoldRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapAndHold:)];
+    doubleTapAndHoldRecognizer.numberOfTapsRequired = 1; // Double-tap.
+    doubleTapAndHoldRecognizer.minimumPressDuration = 0.1;
+    doubleTapAndHoldRecognizer.allowableMovement = MAXFLOAT;  // We don't really care how far apart the two taps are.
+    doubleTapAndHoldRecognizer.delegate = self;
+    
     [self addGestureRecognizer:singleTapRecognizer];
     [self addGestureRecognizer:doubleTapRecognizer];
     [self addGestureRecognizer:longPressRecognizer];
+    [self addGestureRecognizer:doubleTapAndHoldRecognizer];
 
     // two finger taps
     UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)];
@@ -1844,6 +1851,26 @@
         // pass map long-press to delegate
         //
         [_delegate longPressOnMap:self at:[recognizer locationInView:self]];
+    }
+}
+
+- (void)handleDoubleTapAndHold:(UILongPressGestureRecognizer *)recognizer
+{
+    // Handle gesture to double-tap and drag up and down to zoom in and out:
+    switch (recognizer.state)
+    {
+        case UIGestureRecognizerStateBegan:
+        {
+            zoomTapStartY = [recognizer locationInView:self].y;
+            zoomTapStartingZoom = self.zoom;
+        }
+        case UIGestureRecognizerStateChanged:
+        {
+            float zoomDiff = ([recognizer locationInView:self].y - zoomTapStartY) / ZOOM_GESTURE_SCALE_FACTOR;
+            float newZoom = zoomTapStartingZoom + zoomDiff;
+            [self setZoom:newZoom];
+            break;
+        }
     }
 }
 
